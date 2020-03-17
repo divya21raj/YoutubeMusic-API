@@ -48,13 +48,19 @@ class Google:
     def getLibrary(self):
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_argument('user-data-dir='+self.ROOT_DIR+'/config')
-        # chrome_options.add_argument('--headless')
+        chrome_options.add_argument('--headless')
         self.driver=webdriver.Chrome(options=chrome_options)
         self.driver.get('https://music.youtube.com')
         sleep(5)
         self.driver.save_screenshot("2.png")
         mylike.driver.find_element_by_xpath('//*[@id="layout"]/ytmusic-nav-bar/div[2]/ytmusic-pivot-bar-renderer/ytmusic-pivot-bar-item-renderer[3]').click()
-        sleep(3)
+        sleep(5)
+
+        element = mylike.driver.find_element_by_xpath('//*[@id="contents"]/ytmusic-item-section-renderer')
+        items = element.find_element_by_xpath('.//*[@id="items"]')
+        for item in items.find_elements_by_tag_name('a'):
+            if("playlist" in item.get_attribute('href') and item.get_attribute('class') == 'yt-simple-endpoint style-scope yt-formatted-string'):
+                print(item.text)
 
 
     def load_creds(self): 
