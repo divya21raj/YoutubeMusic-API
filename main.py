@@ -53,6 +53,9 @@ class Google:
         self.driver.get('https://music.youtube.com')
         sleep(5)
         self.driver.save_screenshot("2.png")
+        mylike.driver.find_element_by_xpath('//*[@id="layout"]/ytmusic-nav-bar/div[2]/ytmusic-pivot-bar-renderer/ytmusic-pivot-bar-item-renderer[3]').click()
+        sleep(3)
+
 
     def load_creds(self): 
         with open('creds.json') as f:
