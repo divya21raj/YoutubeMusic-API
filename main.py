@@ -4,7 +4,7 @@ from time import sleep
 import os
 import json
 
-class Google:
+class YtMusic:
 
     def __init__(self,login):
         
@@ -53,10 +53,10 @@ class Google:
         self.driver.get('https://music.youtube.com')
         sleep(5)
         self.driver.save_screenshot("2.png")
-        mylike.driver.find_element_by_xpath('//*[@id="layout"]/ytmusic-nav-bar/div[2]/ytmusic-pivot-bar-renderer/ytmusic-pivot-bar-item-renderer[3]').click()
+        self.driver.find_element_by_xpath('//*[@id="layout"]/ytmusic-nav-bar/div[2]/ytmusic-pivot-bar-renderer/ytmusic-pivot-bar-item-renderer[3]').click()
         sleep(5)
 
-        element = mylike.driver.find_element_by_xpath('//*[@id="contents"]/ytmusic-item-section-renderer')
+        element = self.driver.find_element_by_xpath('//*[@id="contents"]/ytmusic-item-section-renderer')
         items = element.find_element_by_xpath('.//*[@id="items"]')
         for item in items.find_elements_by_tag_name('a'):
             if("playlist" in item.get_attribute('href') and item.get_attribute('class') == 'yt-simple-endpoint style-scope yt-formatted-string'):
@@ -72,5 +72,5 @@ class Google:
         return username, password
 
 
-mylike= Google(login=False)
-mylike.getLibrary()
+ytm= YtMusic(login=False)
+ytm.getLibrary()
