@@ -1,6 +1,9 @@
 creds.json
 config
+debug
 *.png
 .vscode
 *.html
+__pycache__
+YtMusicApi/__pycache__
 

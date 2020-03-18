@@ -2,13 +2,14 @@ from selenium import webdriver
 
 from time import sleep
 import os
+import sys
 import json
 
 class YtMusic:
 
     def __init__(self):
         
-        self.ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+        self.ROOT_DIR = os.path.split(os.path.dirname(os.path.abspath(__file__)))[0]
         self.init_command_dict()
 
     def googleLogin(self):
@@ -49,9 +50,14 @@ class YtMusic:
             sleep(5)
             self.driver.save_screenshot("1.png")
             print(self.driver.title)
+
+        except Exception as e:
+            print(e)
         
         finally:
-            self.driver.close()
+            if(hasattr(self, 'driver')): 
+                self.driver.close()
+            else: sys.exit(1)
 
 
     def getPlaylists(self):
@@ -72,15 +78,19 @@ class YtMusic:
                 if("playlist" in item.get_attribute('href') and item.get_attribute('class') == 'yt-simple-endpoint style-scope yt-formatted-string'):
                     print(item.text)
         finally:
-            self.driver.close()
+            if (hasattr(self, 'driver')): self.driver.close()
+            else: sys.exit(1)
     
     def init_command_dict(self):
         self.command_dict ={'get-playlists' : self.getPlaylists,}
 
-    def load_creds(self): 
-        with open('creds.json') as f:
-            data = json.load(f)
-            username = data['username']
-            password = data['password']
+    def load_creds(self):
+        try: 
+            with open(self.ROOT_DIR + '/creds.json') as f:
+                data = json.load(f)
+                username = data['username']
+                password = data['password']
 
-        return username, password
+            return username, password
+            
+        except: print("creds.json not found")
