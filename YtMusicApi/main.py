@@ -1,5 +1,5 @@
-from yt_music import YtMusic
 from utils.parser import parser
+from yt_music import YtMusic
 
 # Parsing the program arguments
 args = parser.parse_args()
@@ -14,5 +14,3 @@ command = args.function.strip()
 
 # Executing Command
 ytm.command_dict[command]()
-
-
