@@ -3,7 +3,8 @@ from selenium import webdriver
 from time import sleep
 import os
 import sys
-import json
+
+from utils.creds import load_creds
 
 class YtMusic:
 
@@ -22,7 +23,7 @@ class YtMusic:
     
     def googleLogin(self):
         try:
-            username, password = self.load_creds()
+            username, password = load_creds(self.ROOT_DIR)
             
             self.setup_driver(headless=False)
 
@@ -133,13 +134,4 @@ class YtMusic:
         self.command_dict ={'get-playlists' : self.getPlaylists,
                             'cleanup-playlists': self.cleanup_playlists,}
 
-    def load_creds(self):
-        try: 
-            with open(self.ROOT_DIR + '/creds.json') as f:
-                data = json.load(f)
-                username = data['username']
-                password = data['password']
-
-            return username, password
-            
-        except: print("creds.json not found")
+    
