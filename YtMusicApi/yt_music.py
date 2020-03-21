@@ -1,8 +1,12 @@
 from selenium import webdriver
 from selenium.webdriver import ActionChains
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
 
 import os
 import sys
+from time import sleep
 
 from utils.creds import load_creds
 
@@ -41,18 +45,30 @@ class YtMusic:
 
             print(self.driver.title)
             self.driver.save_screenshot("1.png")
-            self.driver.save_screenshot("1.png")
-            self.driver.find_element_by_xpath('//input[@type="email"]').send_keys(username)
+            WebDriverWait(self.driver, 10).until(
+                EC.element_to_be_clickable(
+                    (By.XPATH, '//input[@type="email"]'))).send_keys(username)
             self.driver.find_element_by_xpath('//*[@id="identifierNext"]').click()
 
             print(self.driver.title)
-            self.driver.find_element_by_xpath('//input[@type="password"]').send_keys(password)
-            self.driver.save_screenshot("1.png")
+            WebDriverWait(self.driver, 10).until(
+                EC.element_to_be_clickable(
+                    (By.XPATH, '//input[@type="password"]'))).send_keys(password)
             self.driver.find_element_by_xpath('//*[@id="passwordNext"]').click()
+
+            WebDriverWait(self.driver, 10).until(
+                EC.element_to_be_clickable(
+                    (By.XPATH,
+                     '/html/body/header')))  # Waiting for login to complete
 
             self.driver.get('https://music.youtube.com')
             self.driver.save_screenshot("1.png")
             print(self.driver.title)
+            WebDriverWait(self.driver, 10).until(
+                EC.element_to_be_clickable((
+                    By.XPATH,
+                    '//ytmusic-section-list-renderer/div[2]/ytmusic-carousel-shelf-renderer[2]'
+                ))) # Waiting for page to load
 
         except Exception as e:
             print(e)
