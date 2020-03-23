@@ -41,20 +41,20 @@ class YtMusic:
                 return
 
             self.driver.save_screenshot("1.png")
-            self.driver.find_element_by_xpath('//*[@id="openid-buttons"]/button[1]').click()
+            self.driver.find_element(By.XPATH, '//*[@id="openid-buttons"]/button[1]').click()
 
             print(self.driver.title)
             self.driver.save_screenshot("1.png")
             WebDriverWait(self.driver, 10).until(
                 EC.element_to_be_clickable(
                     (By.XPATH, '//input[@type="email"]'))).send_keys(username)
-            self.driver.find_element_by_xpath('//*[@id="identifierNext"]').click()
+            self.driver.find_element(By.XPATH, '//*[@id="identifierNext"]').click()
 
             print(self.driver.title)
             WebDriverWait(self.driver, 10).until(
                 EC.element_to_be_clickable(
                     (By.XPATH, '//input[@type="password"]'))).send_keys(password)
-            self.driver.find_element_by_xpath('//*[@id="passwordNext"]').click()
+            self.driver.find_element(By.XPATH, '//*[@id="passwordNext"]').click()
 
             WebDriverWait(self.driver, 10).until(
                 EC.element_to_be_clickable(
@@ -86,10 +86,10 @@ class YtMusic:
             self.driver.get('https://music.youtube.com/library/playlists')
             self.driver.save_screenshot("1.png")
 
-            element = self.driver.find_element_by_xpath('//*[@id="contents"]/ytmusic-item-section-renderer')
-            items = element.find_element_by_xpath('.//*[@id="items"]')
+            element = self.driver.find_element(By.XPATH, '//*[@id="contents"]/ytmusic-item-section-renderer')
+            items = element.find_element(By.XPATH, './/*[@id="items"]')
 
-            for item in items.find_elements_by_tag_name('a'):
+            for item in items.find_elements(By.TAG_NAME, 'a'):
                 if("playlist" in item.get_attribute('href') and item.get_attribute('class') == 'yt-simple-endpoint style-scope yt-formatted-string'):
                     print(item.text)
 
@@ -107,8 +107,8 @@ class YtMusic:
             self.driver.get('https://music.youtube.com/library/playlists')
             self.driver.save_screenshot("3.png")
 
-            element = self.driver.find_element_by_xpath('//*[@id="contents"]/ytmusic-item-section-renderer')
-            items = element.find_element_by_xpath('.//*[@id="items"]')
+            element = self.driver.find_element(By.XPATH, '//*[@id="contents"]/ytmusic-item-section-renderer')
+            items = element.find_element(By.XPATH, './/*[@id="items"]')
 
             self.playlistMap = {}   #{playlist_title : url}
             for item in items.find_elements_by_tag_name('a')[6:]:
@@ -120,24 +120,38 @@ class YtMusic:
             # for title in self.playlistMap:
             #     self.driver.get(self.playlistMap[title])
             #     print('=========' + title + '==========')
-            #     items = self.driver.find_elements_by_xpath('//*[@id="contents"]/ytmusic-responsive-list-item-renderer')
+            #     items = self.driver.find_elements(By.XPATH, '//*[@id="contents"]/ytmusic-responsive-list-item-renderer')
             #     for index, item in enumerate(items):
             #         try:
-            #             print(item.find_element_by_xpath('//*[@id="contents"]/ytmusic-responsive-list-item-renderer['+str(index+1)+']/div[2]/div[1]/yt-formatted-string/a').text)
+            #             print(item.find_element(By.XPATH, '//*[@id="contents"]/ytmusic-responsive-list-item-renderer['+str(index+1)+']/div[2]/div[1]/yt-formatted-string/a').text)
             #         except:  # Can be a deleted song
             #             pass
 
             self.driver.get(self.playlistMap['Non Stop Pop'])
-            items = self.driver.find_elements_by_xpath('//*[@id="contents"]/ytmusic-responsive-list-item-renderer')
+            items = self.driver.find_elements(By.XPATH, '//*[@id="contents"]/ytmusic-responsive-list-item-renderer')
 
             self.driver.implicitly_wait(0)
             for index, item in enumerate(items):
                 try:
-                    print(item.find_element_by_xpath('//*[@id="contents"]/ytmusic-responsive-list-item-renderer['+str(index+1)+']/div[2]/div[1]/yt-formatted-string/a').text)
-                    actions = ActionChains(item)
-                    actions.move_to_element(item)
-                    actions.click(item)
-                    actions.perform()
+                    title = item.find_element(By.XPATH, 
+                        '//*[@id="contents"]/ytmusic-responsive-list-item-renderer['
+                        + str(index + 1) +
+                        ']/div[2]/div[1]/yt-formatted-string/a').text
+                    artist = item.find_element(By.XPATH, 
+                        '//*[@id="contents"]/ytmusic-responsive-list-item-renderer['
+                        + str(index + 1) +
+                        ']/div[2]/div[3]/yt-formatted-string/a').text
+                    print(title)
+                    
+                    hover = ActionChains(self.driver).move_to_element(item)
+                    hover.perform()
+
+                    button = WebDriverWait(self.driver, 30).until(EC.presence_of_element_located((By.XPATH, "//div[@id='gridProduct10247118']//a[@class='primary-button']")))
+                    hover = ActionChains(self.driver).move_to_element(button)
+                    hover.perform()
+
+                    button.click()
+
                 except Exception as e:  # Can be a deleted song
                     print(e)
 
@@ -148,9 +162,9 @@ class YtMusic:
             self.driver.implicitly_wait(10)
 
     def createPlaylist(self, title):
-        self.driver.find_element_by_xpath('//*[@id="items"]/ytmusic-two-row-item-renderer[1]/div[1]/yt-formatted-string[1]/a').click()
-        self.driver.find_element_by_xpath('//*[@id="input-2"]/input').send_keys(title)
-        self.driver.find_element_by_xpath('//*[@id="general-pane"]/div[2]/paper-button[2]').click()
+        self.driver.find_element(By.XPATH, '//*[@id="items"]/ytmusic-two-row-item-renderer[1]/div[1]/yt-formatted-string[1]/a').click()
+        self.driver.find_element(By.XPATH, '//*[@id="input-2"]/input').send_keys(title)
+        self.driver.find_element(By.XPATH, '//*[@id="general-pane"]/div[2]/paper-button[2]').click()
 
     def init_command_dict(self):
         self.command_dict ={'get-playlists' : self.getPlaylists,
