@@ -161,6 +161,7 @@ class YtMusic:
         finally:
             self.driver.implicitly_wait(10)
 
+
     def get_artist(self, query):
         self.setup_driver(headless=True)
 
@@ -195,6 +196,7 @@ class YtMusic:
         self.driver.find_element(By.XPATH, '//*[@id="input-2"]/input').send_keys(title)
         self.driver.find_element(By.XPATH, '//*[@id="general-pane"]/div[2]/paper-button[2]').click()
 
+    
     def init_command_dict(self):
         self.command_dict ={'get-playlists' : self.getPlaylists,
                             'cleanup-playlists': self.cleanup_playlists,
