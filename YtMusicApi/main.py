@@ -13,4 +13,4 @@ if(args.login): ytm.googleLogin()
 command = args.function.strip()
 
 # Executing Command
-ytm.command_dict[command]()
+ytm.command_dict[command](args.query)

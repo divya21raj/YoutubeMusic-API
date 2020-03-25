@@ -23,7 +23,7 @@ class YtMusic:
         chrome_options.add_argument('user-data-dir='+self.ROOT_DIR+'/config')
         if(headless): chrome_options.add_argument('--headless')
         self.driver=webdriver.Chrome(options=chrome_options)
-        self.driver.implicitly_wait(10)  # seconds
+        self.driver.implicitly_wait(5)  # seconds
 
 
     def googleLogin(self):
@@ -133,16 +133,16 @@ class YtMusic:
             self.driver.implicitly_wait(0)
             for index, item in enumerate(items):
                 try:
-                    title = item.find_element(By.XPATH, 
+                    title = item.find_element(By.XPATH,
                         '//*[@id="contents"]/ytmusic-responsive-list-item-renderer['
                         + str(index + 1) +
                         ']/div[2]/div[1]/yt-formatted-string/a').text
-                    artist = item.find_element(By.XPATH, 
+                    artist = item.find_element(By.XPATH,
                         '//*[@id="contents"]/ytmusic-responsive-list-item-renderer['
                         + str(index + 1) +
                         ']/div[2]/div[3]/yt-formatted-string/a').text
                     print(title)
-                    
+
                     hover = ActionChains(self.driver).move_to_element(item)
                     hover.perform()
 
@@ -161,6 +161,35 @@ class YtMusic:
         finally:
             self.driver.implicitly_wait(10)
 
+    def get_artist(self, query):
+        self.setup_driver(headless=True)
+
+        self.driver.get('https://music.youtube.com/search?q='+query)
+        try:
+            # Top result
+            self.driver.find_element(
+                By.XPATH,
+                '//*[@id="contents"]/ytmusic-shelf-renderer[1]/h2/yt-formatted-string'
+            )
+
+            artist_link = self.driver.find_element(By.XPATH,
+                '//*[@id="contents"]/ytmusic-responsive-list-item-renderer/a'
+            ).get_attribute('href')
+
+            print(artist_link)
+            self.driver.get(artist_link)
+
+        except Exception as e:
+            print(e)
+            # No result
+            try:
+                self.driver.find_element(By.LINK_TEXT, "Did you mean")
+                newQuery = self.driver.find_element(By.ID, 'corrected-link')
+                print('Did you mean: ' + newQuery + ' ?')
+            except:
+                print('Artist not found...')
+
+
     def createPlaylist(self, title):
         self.driver.find_element(By.XPATH, '//*[@id="items"]/ytmusic-two-row-item-renderer[1]/div[1]/yt-formatted-string[1]/a').click()
         self.driver.find_element(By.XPATH, '//*[@id="input-2"]/input').send_keys(title)
@@ -168,4 +197,5 @@ class YtMusic:
 
     def init_command_dict(self):
         self.command_dict ={'get-playlists' : self.getPlaylists,
-                            'cleanup-playlists': self.cleanup_playlists,}
+                            'cleanup-playlists': self.cleanup_playlists,
+                            'get-artist': self.get_artist}
